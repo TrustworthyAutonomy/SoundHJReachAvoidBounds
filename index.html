@@ -103,25 +103,35 @@
     <section aria-labelledby="method-title">
       <h2 id="method-title">Sound bounds and adaptive grid refinement</h2>
       <p class="method-lede">
-        Our method computes <strong>sound lower and upper bounds on Hamilton&ndash;Jacobi reach-avoid value functions</strong>.
-        These bounds certify cell classifications despite state-space discretization: a positive conservative lower bound
-        certifies a cell as belonging to the reach-avoid set, while a non-positive conservative upper bound certifies it
-        on the opposite side. Cells that cannot yet be certified remain unclassified.
+        We compute <strong>sound lower and upper bounds on Hamilton&ndash;Jacobi reach-avoid value functions</strong>.
+        Classical grid-based HJ methods evaluate the value function at cell centers and can misclassify cells because
+        they ignore discretization error. Our bounds account for that error, so a cell is labeled only when the bound
+        is enough to certify it.
+      </p>
+      <p class="method-lede">
+        A cell is green when the conservative lower bound is positive
+        (<span aria-label="conservative lower value greater than zero"><em>V</em><sub>cons</sub> &gt; 0</span>)
+        and red when the conservative upper bound is negative
+        (<span aria-label="conservative upper value less than zero"><em>V&#x304;</em><sub>cons</sub> &lt; 0</span>).
+        Gray cells sit between the two bounds and stay unclassified. The refinement algorithm then splits those gray
+        cells, recomputes the bounds, and produces a <strong>tighter value function</strong> concentrated near the
+        reach-avoid boundary. Unsafe cells are never labeled safe at any resolution.
       </p>
 
       <div class="highlight-grid">
         <article class="highlight-card">
-          <h3>Sound at every resolution</h3>
+          <h3>Sound lower and upper bounds</h3>
           <p>
-            The lower and upper value bounds preserve the required reach-avoid guarantees, preventing coarse grid cells
-            from being assigned an unsound classification.
+            The two conservative value functions give a guaranteed classification: green cells belong to the
+            reach-avoid set, red cells do not. Coarse grids stay sound because unlabeled cells remain gray instead of
+            being guessed.
           </p>
         </article>
         <article class="highlight-card">
-          <h3>Tighter through refinement</h3>
+          <h3>Refinement tightens the value function</h3>
           <p>
-            Algorithm&nbsp;2 repeatedly splits the unclassified cells and recomputes the value bounds. Resolution is
-            concentrated near difficult boundaries, tightening the value functions and certifying more of the state space.
+            Algorithm&nbsp;2 splits unclassified cells along their longest side and reruns value iteration. Each
+            iteration yields tighter bounds and a finer grid only where the boundary is still unresolved.
           </p>
         </article>
       </div>
@@ -135,13 +145,14 @@
           loading="lazy"
           decoding="async">
         <figcaption>
-          <strong>Figure 2 &mdash; Dubins car.</strong>
-          Algorithm&nbsp;2 at iterations 1, 7, and 14 with the state space sliced at
-          <span aria-label="theta equals zero">&theta; = 0</span>. The top and middle rows show the conservative upper
-          and lower value bounds; the bottom row shows the resulting cell classifications. Green cells have a positive
-          conservative lower bound, red cells have a non-positive conservative upper bound, and gray cells remain
-          unclassified. As refinement proceeds, the unresolved cells become finer near the reach-avoid boundary while
-          the certified regions expand. The blue circle is the failure set and the dashed yellow circle is the target set.
+          <strong>Figure 2 from the paper &mdash; Dubins car.</strong>
+          Algorithm&nbsp;2 at iterations 1, 7, and 14, shown at
+          <span aria-label="theta equals pi">&theta; = &pi;</span>.
+          The top row is the conservative upper bound <em>V&#x304;</em>, the middle row is the conservative lower bound
+          <em>V</em>, and the bottom row is the resulting cell classification. Green:
+          <em>V</em><sub>cons</sub> &gt; 0. Red: <em>V&#x304;</em><sub>cons</sub> &lt; 0. Gray: still unclassified.
+          After more refinement, the gray band shrinks to a thin boundary layer while the certified green and red
+          regions expand. The solid blue circle is the failure set; the dashed yellow circle is the target set.
         </figcaption>
       </figure>
 
@@ -154,13 +165,12 @@
           loading="lazy"
           decoding="async">
         <figcaption>
-          <strong>Figure 3 &mdash; 3D evasion.</strong>
-          Algorithm&nbsp;2 at iterations 1, 7, and 10 with the state space sliced at
-          <span aria-label="theta equals pi">&theta; = &pi;</span>. The same sound classification rule is used:
-          green cells are certified by the lower bound, red cells by the upper bound, and gray cells remain unresolved.
-          Refining those gray cells produces tighter value bounds around the complex boundary without spending the same
-          resolution on regions that are already easy to classify. The blue circle is the failure set and the dashed
-          yellow circle is the target set.
+          <strong>Figure 3 from the paper &mdash; 3D evasion.</strong>
+          Algorithm&nbsp;2 at iterations 1, 7, and 10, shown at
+          <span aria-label="theta equals pi">&theta; = &pi;</span>, with the same sound classification rule.
+          The target neighborhood is already certified at iteration 1; later iterations refine the remaining gray
+          cells and tighten the value bounds around the more complicated reach-avoid boundary. Easy regions stay
+          coarse. The solid blue circle is the failure set; the dashed yellow circle is the target set.
         </figcaption>
       </figure>
     </section>
