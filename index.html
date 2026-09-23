@@ -100,6 +100,71 @@
       <p class="abstract">Hamilton-Jacobi (HJ) reachability analysis is a fundamental tool for the safety verification and control synthesis of nonlinear control systems. Classical HJ reachability analysis methods compute value functions over grids which discretize the continuous state space. Such approaches do not account for discretization errors and thus do not guarantee that the sets represented by the computed value functions over-approximate the backward reachable sets (BRS) when given avoid specifications or under-approximate the reach-avoid sets (RAS) when given reach-avoid specifications. We address this issue by presenting an algorithm for computing sound upper and lower bounds on the HJ value functions that guarantee the sound over-approximation of BRS and under-approximation of RAS. Additionally, we develop a refinement algorithm that splits the grid cells which could not be classified as within or outside the BRS or RAS given the computed bounds to obtain corresponding tighter bounds. We validate the effectiveness of our algorithm in two case studies.</p>
     </section>
 
+    <section aria-labelledby="method-title">
+      <h2 id="method-title">Sound bounds and adaptive grid refinement</h2>
+      <p class="method-lede">
+        Our method computes <strong>sound lower and upper bounds on Hamilton&ndash;Jacobi reach-avoid value functions</strong>.
+        These bounds certify cell classifications despite state-space discretization: a positive conservative lower bound
+        certifies a cell as belonging to the reach-avoid set, while a non-positive conservative upper bound certifies it
+        on the opposite side. Cells that cannot yet be certified remain unclassified.
+      </p>
+
+      <div class="highlight-grid">
+        <article class="highlight-card">
+          <h3>Sound at every resolution</h3>
+          <p>
+            The lower and upper value bounds preserve the required reach-avoid guarantees, preventing coarse grid cells
+            from being assigned an unsound classification.
+          </p>
+        </article>
+        <article class="highlight-card">
+          <h3>Tighter through refinement</h3>
+          <p>
+            Algorithm&nbsp;2 repeatedly splits the unclassified cells and recomputes the value bounds. Resolution is
+            concentrated near difficult boundaries, tightening the value functions and certifying more of the state space.
+          </p>
+        </article>
+      </div>
+
+      <figure class="research-figure">
+        <img
+          src="sources/fig2-dubins-refinement.webp"
+          alt="Dubins car conservative upper and lower reach-avoid value bounds and cell classifications after refinement iterations 1, 7, and 14"
+          width="1800"
+          height="1673"
+          loading="lazy"
+          decoding="async">
+        <figcaption>
+          <strong>Figure 2 &mdash; Dubins car.</strong>
+          Algorithm&nbsp;2 at iterations 1, 7, and 14 with the state space sliced at
+          <span aria-label="theta equals zero">&theta; = 0</span>. The top and middle rows show the conservative upper
+          and lower value bounds; the bottom row shows the resulting cell classifications. Green cells have a positive
+          conservative lower bound, red cells have a non-positive conservative upper bound, and gray cells remain
+          unclassified. As refinement proceeds, the unresolved cells become finer near the reach-avoid boundary while
+          the certified regions expand. The blue circle is the failure set and the dashed yellow circle is the target set.
+        </figcaption>
+      </figure>
+
+      <figure class="research-figure">
+        <img
+          src="sources/fig3-evasion-refinement.webp"
+          alt="Three-dimensional evasion conservative upper and lower reach-avoid value bounds and cell classifications after refinement iterations 1, 7, and 10"
+          width="1800"
+          height="1687"
+          loading="lazy"
+          decoding="async">
+        <figcaption>
+          <strong>Figure 3 &mdash; 3D evasion.</strong>
+          Algorithm&nbsp;2 at iterations 1, 7, and 10 with the state space sliced at
+          <span aria-label="theta equals pi">&theta; = &pi;</span>. The same sound classification rule is used:
+          green cells are certified by the lower bound, red cells by the upper bound, and gray cells remain unresolved.
+          Refining those gray cells produces tighter value bounds around the complex boundary without spending the same
+          resolution on regions that are already easy to classify. The blue circle is the failure set and the dashed
+          yellow circle is the target set.
+        </figcaption>
+      </figure>
+    </section>
+
     <section aria-labelledby="citation-title">
       <h2 id="citation-title">Citation</h2>
       <pre class="citation"><code>@misc{tabbara2025computingsoundlowerupper,
